@@ -1,0 +1,9 @@
+__pycache__/
+*.pyc
+.idea/
+.venv/
+venv/
+lesson_1/
+lesson_2/
+lesson_3/
+lesson_4/
