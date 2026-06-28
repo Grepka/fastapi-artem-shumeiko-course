@@ -1,6 +1,7 @@
 from typing import List
 from fastapi import APIRouter, Query
 from schemas.hotel import Hotel, HotelPATCH
+from dependencies import PaginationDepends
 
 
 
@@ -33,10 +34,9 @@ hotels_list = [
 
 @router.get("")
 async def get_hotels(
+        pagination: PaginationDepends,
         id: int = Query(default=None, description="ID"),
         name: str =  Query(default=None, description="Название отеля"),
-        page: int = Query(default=None, lt=1, description="Номер страницы"),
-        per_page: int = Query(default=5, lt=5, gt=100, description="Количество отелей на странице"),
 ) -> List:
     hotels_= []
     for hotel in hotels_list:
@@ -45,9 +45,9 @@ async def get_hotels(
         if name and hotel["name"] != name:
             continue
         hotels_.append(hotel)
-    if page:
-        start_index = (page - 1) * per_page
-        end_index = start_index + per_page
+    if pagination.page:
+        start_index = (pagination.page - 1) * pagination.per_page
+        end_index = start_index + pagination.per_page
         return hotels_[start_index:end_index]
     return hotels_
 
