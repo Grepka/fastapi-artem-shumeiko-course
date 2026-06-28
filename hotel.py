@@ -1,6 +1,7 @@
 from typing import List
-from fastapi import APIRouter, Query, Body
-from pydantic import BaseModel
+from fastapi import APIRouter, Query
+from schemas.hotel import Hotel, HotelPATCH
+
 
 
 router = APIRouter(prefix="/hotels", tags=["Отели"])
@@ -12,7 +13,7 @@ hotels_list = [
 ]
 
 
-@router.get("/")
+@router.get("")
 async def get_hotels(
         id: int | None = Query(default=None, description="ID"),
         name: str =  Query(default=None, description="Название отеля")
@@ -26,13 +27,8 @@ async def get_hotels(
         hotels_.append(hotel)
     return hotels_
 
-class Hotels(BaseModel):
-    name: str
-    city: str
-
-
-@router.post("/")
-async def add_hotel(hotel_data: Hotels):
+@router.post("")
+async def add_hotel(hotel_data: Hotel):
     global hotels_list
     id = hotels_list[-1]["id"] + 1
     hotels_list.append({
@@ -43,7 +39,7 @@ async def add_hotel(hotel_data: Hotels):
     return {"result": "ok"}
 
 @router.put("/{hotel_id}")
-async def reload_hotel(hotel_id: int, hotels_data = Hotels) -> dict:
+async def reload_hotel(hotel_id: int, hotels_data: Hotel) -> dict:
     global hotels_list
     for hotel in hotels_list:
         if hotel["id"] == hotel_id:
@@ -58,19 +54,15 @@ async def reload_hotel(hotel_id: int, hotels_data = Hotels) -> dict:
         summary="Частичное обновление данных об отеле",
         description="Тут частично обновляем данные об отеле"
 )
-async def edit_hotel(
-        hotel_id: int,
-        name: str = Body(default=None),
-        city: str = Body(default=None)
-) -> dict:
+async def edit_hotel(hotel_id: int, hotels_data: HotelPATCH) -> dict:
     global hotels_list
-    for hotel in hotels_list:
-        if hotel["id"] == hotel_id:
-            if name is not None:
-                hotel["name"] = name
-            if city is not None:
-                hotel["city"] = city
-            return {"result": "ok"}
+    hotel = [hotel for hotel in hotels_list if hotel["id"] == hotel_id][0]
+    if hotel is not None:
+        if hotels_data.name is not None:
+            hotel["name"] = hotels_data.name
+        if hotels_data.city is not None:
+            hotel["city"] = hotels_data.city
+        return {"result": "ok"}
     return {"result": "not ok"}
 
 

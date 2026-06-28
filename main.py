@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.openapi.docs import get_swagger_ui_html
 import uvicorn
 
-from hotels import router as hotels_router
+from hotel import router as hotels_router
 
 app = FastAPI(docs_url=None)
 app.include_router(hotels_router)
