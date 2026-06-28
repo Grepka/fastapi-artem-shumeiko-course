@@ -2,6 +2,8 @@ from fastapi import FastAPI, Query, Body
 from fastapi.openapi.docs import get_swagger_ui_html
 from typing import List
 import uvicorn
+
+
 app = FastAPI(docs_url=None)
 
 
