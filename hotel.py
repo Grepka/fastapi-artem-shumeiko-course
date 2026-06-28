@@ -8,15 +8,35 @@ router = APIRouter(prefix="/hotels", tags=["Отели"])
 
 
 hotels_list = [
-    {"id": 1, "name": "Красная поляна", "city": "Sochi",},
-    {"id": 2, "name": "Abudaby", "city": "Dubai"},
+    {"id": 1, "name": "Hilton Downtown", "city": "Dubai"},
+    {"id": 2, "name": "Красная поляна", "city": "Sochi"},
+    {"id": 3, "name": "Marriott Marina", "city": "Dubai"},
+    {"id": 4, "name": "Grand Hotel", "city": "Moscow"},
+    {"id": 5, "name": "Sea Breeze", "city": "Sochi"},
+    {"id": 6, "name": "Sky Palace", "city": "Dubai"},
+    {"id": 7, "name": "Nevsky Hotel", "city": "Saint Petersburg"},
+    {"id": 8, "name": "Mountain View", "city": "Krasnaya Polyana"},
+    {"id": 9, "name": "Royal Garden", "city": "Istanbul"},
+    {"id": 10, "name": "Sunrise Resort", "city": "Antalya"},
+    {"id": 11, "name": "Ocean Pearl", "city": "Miami"},
+    {"id": 12, "name": "Golden Sands", "city": "Varna"},
+    {"id": 13, "name": "Central Inn", "city": "Berlin"},
+    {"id": 14, "name": "Imperial Hotel", "city": "Vienna"},
+    {"id": 15, "name": "Palm Residence", "city": "Abu Dhabi"},
+    {"id": 16, "name": "White Hills", "city": "Sochi"},
+    {"id": 17, "name": "Blue Lagoon", "city": "Phuket"},
+    {"id": 18, "name": "Comfort Stay", "city": "Prague"},
+    {"id": 19, "name": "Green Park", "city": "London"},
+    {"id": 20, "name": "Aurora Suites", "city": "Helsinki"},
 ]
 
 
 @router.get("")
 async def get_hotels(
-        id: int | None = Query(default=None, description="ID"),
-        name: str =  Query(default=None, description="Название отеля")
+        id: int = Query(default=None, description="ID"),
+        name: str =  Query(default=None, description="Название отеля"),
+        page: int = Query(default=None, lt=1, description="Номер страницы"),
+        per_page: int = Query(default=5, lt=5, gt=100, description="Количество отелей на странице"),
 ) -> List:
     hotels_= []
     for hotel in hotels_list:
@@ -25,6 +45,10 @@ async def get_hotels(
         if name and hotel["name"] != name:
             continue
         hotels_.append(hotel)
+    if page:
+        start_index = (page - 1) * per_page
+        end_index = start_index + per_page
+        return hotels_[start_index:end_index]
     return hotels_
 
 @router.post("")
