@@ -1,5 +1,7 @@
+.env
 __pycache__/
 *.pyc
 .idea/
 .venv/
+postgresql_data/
 preparatory_task/
