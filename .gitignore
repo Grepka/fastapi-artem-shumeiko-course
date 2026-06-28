@@ -4,4 +4,4 @@ __pycache__/
 .idea/
 .venv/
 postgresql_data/
-preparatory_task/
+_preparatory_task/
