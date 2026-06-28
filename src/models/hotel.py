@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Mapped, mapped_column
 from sqlalchemy.types import BigInteger, String
 
-from scr.database import Base
+from src.database import Base
 
 class HotelOrm(Base):
     __tablename__ = "hotels"

@@ -1,7 +1,7 @@
 from typing import List
 from fastapi import APIRouter, Query
-from scr.schemas.hotel import Hotel, HotelPATCH
-from scr.api.dependencies import PaginationDepends
+from src.schemas.hotel import Hotel, HotelPATCH
+from src.api.dependencies import PaginationDepends
 
 
 
