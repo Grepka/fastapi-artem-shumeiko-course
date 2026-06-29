@@ -5,7 +5,7 @@ from src.database import async_session_maker
 from src.schemas.hotel import Hotel, HotelPATCH
 from src.api.dependencies import PaginationDepends
 from src.models.hotel import HotelOrm
-from src.repositories.hotels import HotelsRepository
+from src.repositories.hotel import HotelRepository
 
 
 router = APIRouter(prefix="/hotels", tags=["Отели"])
@@ -14,24 +14,18 @@ router = APIRouter(prefix="/hotels", tags=["Отели"])
 @router.get("")
 async def get_hotels(
         pagination: PaginationDepends,
-        title: str =  Query(default=None, description="Название отеля"),
-        location: str =  Query(default=None, description="Адрес"),
+        title: str=Query(default=None, description="Название отеля"),
+        location: str=Query(default=None, description="Адрес"),
 ):
-    # per_page = pagination.per_page or 5
     async with async_session_maker() as session:
-        return await HotelsRepository(session).get_all()
-        # query = select(HotelOrm)
-        # if title is not None:
-        #     query = query.filter(func.lower(HotelOrm.title).contains(title.lower()))
-        # if location is not None:
-        #     query = query.filter(func.lower(HotelOrm.location).contains(location.lower()))
-        # query = (
-        #     query
-        #     .limit(per_page)
-        #     .offset(per_page * (pagination.page - 1))
-        # )
-        # result = await session.execute(query)
-        # return result.scalars().all()
+        per_page = pagination.per_page or 5
+        return await HotelRepository(session).get_all(
+            title=title,
+            location=location,
+            per_page=per_page,
+            offset=per_page * (pagination.page - 1)
+        )
+
 
 @router.post("")
 async def create_hotel(hotel_data: Hotel):
