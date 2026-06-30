@@ -1,4 +1,4 @@
-from sqlalchemy import select, insert, func
+from sqlalchemy import select, insert, delete, func
 
 from src.repositories.base import BaseRepository
 from src.models.hotel import HotelOrm
@@ -22,3 +22,5 @@ class HotelRepository(BaseRepository):
         query = query.limit(per_page).offset(offset)
         result = await self.session.execute(query)
         return result.scalars().all()
+
+

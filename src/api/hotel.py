@@ -4,7 +4,6 @@ from fastapi import APIRouter, Query
 from src.database import async_session_maker
 from src.schemas.hotel import Hotel, HotelPATCH
 from src.api.dependencies import PaginationDepends
-from src.models.hotel import HotelOrm
 from src.repositories.hotel import HotelRepository
 
 
@@ -51,19 +50,15 @@ async def reload_hotel(hotel_id: int, hotels_data: Hotel) -> dict:
         description="Тут частично обновляем данные об отеле"
 )
 async def edit_hotel(hotel_id: int, hotels_data: HotelPATCH) -> dict:
-    global hotels_list
-    hotel = [hotel for hotel in hotels_list if hotel["id"] == hotel_id][0]
-    if hotel is not None:
-        if hotels_data.name is not None:
-            hotel["name"] = hotels_data.name
-        if hotels_data.city is not None:
-            hotel["city"] = hotels_data.city
-        return {"result": "ok"}
-    return {"result": "not ok"}
+    async with async_session_maker() as session:
+        await HotelRepository(session).edit(hotels_data, id=hotel_id)
+        await session.commit()
+        return {"result": "OK"}
 
 
 @router.delete("/{hotel_id}")
 async def delete_hotel(hotel_id: int):
-    global hotels_list
-    hotels_list = [hotel for hotel in hotels_list if hotel["id"] != hotel_id]
-    return {"result": "ok"}
+    async with async_session_maker() as session:
+        await HotelRepository(session).delete(id=hotel_id)
+        await session.commit()
+        return {"result": "OK"}
