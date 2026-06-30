@@ -1,11 +1,13 @@
-from sqlalchemy import select, insert, delete, func
+from sqlalchemy import select, func
 
 from src.repositories.base import BaseRepository
 from src.models.hotel import HotelOrm
+from src.schemas.hotel import Hotel
 
 
 class HotelRepository(BaseRepository):
     model = HotelOrm
+    schema = Hotel
 
     async def get_all(
             self,
@@ -21,6 +23,9 @@ class HotelRepository(BaseRepository):
             query = query.filter(func.lower(self.model.location).contains(location.lower()))
         query = query.limit(per_page).offset(offset)
         result = await self.session.execute(query)
-        return result.scalars().all()
+        return [
+            self.schema.model_validate(model, from_attributes=True)
+            for model in result.scalars().all()
+        ]
 
 
