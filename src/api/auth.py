@@ -14,6 +14,9 @@ async def create_user(user_data: UserRequestAdd):
     hashed_password = pwd_context.hash(user_data.password)
     new_user_data = UserAdd(email=user_data.email, password=hashed_password)
     async with async_session_maker() as session:
+        is_exist = await UserRepositories(session).check_exist(user_data.email)
+        if is_exist:
+            return {"result": "You are already registered"}
         await UserRepositories(session).add(new_user_data)
         await session.commit()
         return {"result": "OK"}
